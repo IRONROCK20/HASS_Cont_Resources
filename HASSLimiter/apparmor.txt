@@ -1,0 +1,9 @@
+# Deny everything by default, allow Docker socket
+profile container_limiter flags=(attach_disconnected,mediate_deleted) {
+  network,
+  file,
+  unix,
+
+  # Allow Docker socket
+  /var/run/docker.sock rw,
+}
