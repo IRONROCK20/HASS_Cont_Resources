@@ -1,0 +1,46 @@
+async function api(path, opts = {}) {
+  const res = await fetch(`/api/${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+    ...opts
+  });
+  return res.json();
+}
+
+async function init() {
+  const [options, containers] = await Promise.all([
+    api('options'),
+    api('containers')
+  ]);
+
+  const list = document.getElementById('containerList');
+  containers.forEach(name => {
+    const cfg = options.limits[name] || {};
+    list.insertAdjacentHTML('beforeend', `
+      <fieldset>
+        <label>
+          <input type="checkbox" name="enable_${name}" ${cfg.cpus ? '' : 'unchecked'}>
+          ${name}
+        </label>
+        CPUs: <input type="number" step="0.1" name="cpus_${name}" value="${cfg.cpus||1}">
+        Memory: <input type="text" name="memory_${name}" value="${cfg.memory||'512m'}">
+      </fieldset>
+    `);
+  });
+
+  document.getElementById('limitsForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const newOpts = { delay: options.delay, limits: {} };
+    containers.forEach(name => {
+      if (e.target[`enable_${name}`].checked) {
+        newOpts.limits[name] = {
+          cpus: parseFloat(e.target[`cpus_${name}`].value),
+          memory: e.target[`memory_${name}`].value
+        };
+      }
+    });
+    await api('options', { method: 'POST', body: JSON.stringify(newOpts) });
+    alert('Saved!');
+  });
+}
+
+init();
