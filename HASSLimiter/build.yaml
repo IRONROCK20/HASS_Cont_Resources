@@ -1,0 +1,7 @@
+image: >-
+  ghcr.io/home-assistant/{arch}-base:latest
+build_on:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
