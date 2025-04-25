@@ -1,0 +1,38 @@
+name: "Container Limiter"
+description: "Apply per-container CPU/RAM caps, with dynamic GUI"
+version: "1.0.0"
+slug: "container_limiter"
+init: false            # Use bashio, not s6-overlay
+arch:
+  - amd64
+  - aarch64
+  - armv7
+  - armhf
+startup: services      # Start background services
+boot: auto
+host_network: true
+privileged: true
+hassio_api: true       # Enables Supervisor API access :contentReference[oaicite:4]{index=4}
+hassio_role: default
+ingress: true          # Enable Ingress GUI :contentReference[oaicite:5]{index=5}
+ingress_port: 8099
+
+options:
+  delay: 30            # Seconds to wait before initial pass
+  limits: {}           # Populated by the UI
+
+schema:
+  delay:
+    type: integer
+    minimum: 0
+  limits:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        cpus:
+          type: number
+          minimum: 0.1
+        memory:
+          type: string
+      required: [cpus, memory]
