@@ -1,11 +1,11 @@
-#!/usr/bin/env bash
+#!/usr/bin/with-contenv bashio
 set -e
 
-# Start Nginx for Ingress UI
+# Launch Nginx for Ingress
 nginx -g 'daemon off;' &
 
-# Launch the limiter logic in background
+# Start background limiter
 /run-limiter.sh &
 
-# Start the Express-based API server
+# Start Express API
 node /app/index.js
